@@ -11,27 +11,30 @@ app.config.update(
 celery = make_celery(app)
 
 
-model =
-
-
 @app.route('/api/infer', methods=['POST'])
 def post_data(payload):
-    results = worker_process(payload)
-    return jsonify(payload)
+    urls = payload['images']
+    results = worker_process(urls)
+    return jsonify(results)
 
 
 @celery.task()
-def worker_process(payload):
-    try:
-        model
-    except NameError:
-        model =  pipeline.build_model()    
+def worker_process(urls):
     
-    urls = payload['images']
+    
     img_list = pipeline.load_imgs(urls)
+    img_list_valid = [im for im in img_list if im['data'] is not None]
     
+    try:
+        module
+    except NameError:
+        module =  pipeline.build_module(batch_size)    
     
+    results = pipeline.process_images(img_list_valid, module)
 
+    for im in img_list:
+        if im['data'] is not None:
+            
 
 
 if __name__ == '__main__':

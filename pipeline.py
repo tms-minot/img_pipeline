@@ -6,13 +6,27 @@ import numpy as np
 
 import rabbitmq as mq
 
-def build_model():
-    mod = mx.Symbol.load()
+def build_module(batch_size):
+    
+    sym = mx.sym.load(sym_path)
+    mod = mx.mod.Module(sym, context=gpu(0))
+    mod.bind([("batch_data",(batch_size,3,299,299))], for_training=False)
+    mod.load_params(param_path)
+    return mod
+    
 
-def infer():
+def process_images(img_list, module):
+    
+    data = np.stack([im['data'] for im in img_list])
+    eval_data = mx.io.NDArrayIter(data, batch_size=batch_size)
+    pred = module.predict(eval_data)
+    
+    return pred
+
     
     
 def preprocess_img(img):
+    
     h,w = img.shape[:2]
     img = img.astype('float32')
     crop = np.min(h,w)
@@ -33,15 +47,13 @@ def load_img(url):
     
     return img
         
-def load_images(url_list)
+def load_images(url_list):
 
     img_list = []
     for u in url_list:
         img_list.append({})
-        img['url'] = u
-        img['data'] = load_img(u)
+        img_list[-1]['url'] = u
+        img_list[-1]['data'] = load_img(u)
     
     return img_list
 
-
-de
