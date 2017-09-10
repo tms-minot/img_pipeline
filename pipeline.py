@@ -9,7 +9,7 @@ import rabbitmq as mq
 def build_module(batch_size):
     
     sym = mx.sym.load(sym_path)
-    mod = mx.mod.Module(sym, context=gpu(0))
+    mod = mx.mod.Module(sym, context=mx.context.gpu(0))
     mod.bind([("batch_data",(batch_size,3,299,299))], for_training=False)
     mod.load_params(param_path)
     return mod
@@ -23,7 +23,6 @@ def process_images(img_list, module):
     
     return pred
 
-    
     
 def preprocess_img(img):
     
@@ -39,6 +38,24 @@ def preprocess_img(img):
     img = np.expand_dims(img, axis=0) # add dimension for batch
     return img
     
+def make_results(img_list, pred, thr):
+    
+    syn = []
+    with open('model/synset.txt') as f:
+        for line in f[1:]:
+            syn.append(line[10:].split(' ', 1)[0])
+            
+    j = 0
+    for im in img_list:
+        if im['data'] is not None:
+            im['classes'] = [{'class': syn[i], 'confidence':r} for i,r in enumerate(np.nditer(pred[j])) if r>thr]
+            j +=1
+        else:
+            im['Error'] = 'Invalid URL'
+        im.pop('data')
+    
+    return img_list
+    
 def load_img(url):
     try:
         img = io.imread(url)
@@ -47,7 +64,7 @@ def load_img(url):
     
     return img
         
-def load_images(url_list):
+def load_imgs(url_list):
 
     img_list = []
     for u in url_list:

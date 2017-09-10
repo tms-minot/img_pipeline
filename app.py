@@ -30,12 +30,11 @@ def worker_process(urls):
     except NameError:
         module =  pipeline.build_module(batch_size)    
     
-    results = pipeline.process_images(img_list_valid, module)
+    pred = pipeline.process_images(img_list_valid, module).asnumpy()
 
-    for im in img_list:
-        if im['data'] is not None:
-            
+    result = pipeline.make_results(img_list, pred, thr)
 
+    return result
 
 if __name__ == '__main__':
     app.run(debug=True)
