@@ -4,35 +4,33 @@ import pipeline
 from celery import Celery
 
 
-app = Flask(__name__)
+app = Flask(__name__)                                                       # htttp app with rabbitmq broker
 app.config.update(
     CELERY_BROKER_URL='ampq://localhost:6379',
     CELERY_RESULT_BACKEND='ampq://localhost:6379')
-celery = make_celery(app)
+celery = make_celery(app)                                                   # async job queue for workers to process
 
 
-@app.route('/api/infer', methods=['POST'])
+@app.route('/api/infer', methods=['POST'])                                  # API entry point decorator
 def post_data(payload):
-    urls = payload['images']
+    urls = payload['images']                                                # JSON input
     results = worker_process(urls)
-    return jsonify(results)
+    return jsonify(results)                                                 # JSON ouput
 
 
-@celery.task()
+@celery.task()                                                              # celery worker
 def worker_process(urls):
-    
     
     img_list = pipeline.load_imgs(urls)
     img_list_valid = [im for im in img_list if im['data'] is not None]
     
     try:
-        module
+        module                                                              # if undefined,
     except NameError:
-        module =  pipeline.build_module(batch_size)    
+        module =  pipeline.build_module(batch_size)                         # build MXNet module once for each worker 
     
-    pred = pipeline.process_images(img_list_valid, module).asnumpy()
-
-    result = pipeline.make_results(img_list, pred, thr)
+    pred = pipeline.process_images(img_list_valid, module).asnumpy()        # inference results 
+    result = pipeline.make_results(img_list, pred, thr)                     # classes and scores
 
     return result
 
