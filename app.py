@@ -3,11 +3,23 @@ from flask import Flask, jsonify
 import pipeline
 from celery import Celery
 
-
+def make_celery(app):
+    celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
+                    broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+    
 app = Flask(__name__)                                                       # http app with rabbitmq broker
 app.config.update(
-    CELERY_BROKER_URL='ampq://localhost:6379',
-    CELERY_RESULT_BACKEND='ampq://localhost:6379')
+    CELERY_BROKER_URL='amqp://guest:guest@localhost:5672',
+    CELERY_RESULT_BACKEND='amqp://guest:guest@localhost:5672')
 celery = make_celery(app)                                                   # async job queue for workers to process
 
 
@@ -38,15 +50,3 @@ if __name__ == '__main__':
     app.run(debug=True)
     
 
-def make_celery(app):
-    celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
-                    broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
-    TaskBase = celery.Task
-    class ContextTask(TaskBase):
-        abstract = True
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return TaskBase.__call__(self, *args, **kwargs)
-    celery.Task = ContextTask
-    return celery

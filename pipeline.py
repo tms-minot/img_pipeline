@@ -2,19 +2,21 @@ import mxnet as mx
 import json
 import csv
 from skimage import io
+from scipy.misc import imresize
 import numpy as np
 
-sym_path = 'Inception-7-symbol.json'
-param_path = 'Inception-7-0001.params'
+sym_path = 'model/Inception-7-symbol.json'
+param_path = 'model/Inception-7-0001.params'
 batch_size = 40
+thr = 0.95
 
 
-def build_module(batch_size):
+def build_module():
     ### This function builds the MXnet model of Inception V3 ###
     
     sym = mx.sym.load(sym_path)                                             # load symbol    
-    mod = mx.mod.Module(sym, context=mx.context.gpu(0))                     # instantiate module
-    mod.bind([("batch_data",(batch_size,3,299,299))], for_training=False)   # bind to memory, only for inference
+    mod = mx.mod.Module(sym, context=mx.cpu())                     # instantiate MXNet module
+    mod.bind([("data",(batch_size,3,299,299))], for_training=False)   # bind to memory, only for inference
     mod.load_params(param_path)                                             # load pretrained weights    
     return mod
     
@@ -32,11 +34,12 @@ def preprocess_img(img):
     ### Preprocessing for Inception V3 ###
     
     h,w = img.shape[:2]
-    img = img.astype('float32')
-    crop = np.min(h,w)
+    
+    crop = np.min([h,w])
     img = img.transpose((2, 0, 1))                                          # channels first
     img = img[:, (h-crop)//2:(h+crop)//2, (w-crop)//2:(w+crop)//2]          # crop
-    img = scipy.misc.imresize((299,299))                                    # resize for first layer
+    img = imresize(img, (299,299))                                    # resize for first layer
+    img = img.astype('float32')
     img /= 255                                                      
     img -= 0.5
     img *= 2.
@@ -66,6 +69,7 @@ def load_img(url):
     ### This function downloads an numpy image ###
     try:
         img = io.imread(url)
+        assert img.shape[2] is 3
     except:
         print "Invalid data or url"
     
