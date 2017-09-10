@@ -12,7 +12,18 @@ def build_model():
 def infer():
     
     
-def preprocess_img():
+def preprocess_img(img):
+    h,w = img.shape[:2]
+    img = img.astype('float32')
+    crop = np.min(h,w)
+    img = img.transpose((2, 0, 1)) # re-order dimensions
+    img = img[:, (h-crop)//2:(h+crop)//2, (w-crop)//2:(w+crop)//2] #crop
+    img = scipy.misc.imresize((299,299))
+    img /= 255.
+    img -= 0.5
+    img *= 2.
+    img = np.expand_dims(img, axis=0) # add dimension for batch
+    return img
     
 def load_img(url):
     try:

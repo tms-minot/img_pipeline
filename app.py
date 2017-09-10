@@ -6,12 +6,12 @@ from celery import Celery
 
 app = Flask(__name__)
 app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379')
+    CELERY_BROKER_URL='ampq://localhost:6379',
+    CELERY_RESULT_BACKEND='ampq://localhost:6379')
 celery = make_celery(app)
 
 
-model = pipeline.build_model()
+model =
 
 
 @app.route('/api/infer', methods=['POST'])
@@ -22,8 +22,14 @@ def post_data(payload):
 
 @celery.task()
 def worker_process(payload):
+    try:
+        model
+    except NameError:
+        model =  pipeline.build_model()    
+    
     urls = payload['images']
     img_list = pipeline.load_imgs(urls)
+    
     
 
 
