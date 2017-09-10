@@ -4,14 +4,17 @@ import csv
 from skimage import io
 import numpy as np
 
-import rabbitmq as mq
+sym_path = 'Inception-7-symbol.json'
+param_path = 'Inception-7-0001.params'
+batch_size = 40
+
 
 def build_module(batch_size):
     ### This function builds the MXnet model of Inception V3 ###
     
     sym = mx.sym.load(sym_path)                                             # load symbol    
     mod = mx.mod.Module(sym, context=mx.context.gpu(0))                     # instantiate module
-    mod.bind([("batch_data",(batch_size,3,299,299))], for_training=False)   # bind to memory 
+    mod.bind([("batch_data",(batch_size,3,299,299))], for_training=False)   # bind to memory, only for inference
     mod.load_params(param_path)                                             # load pretrained weights    
     return mod
     

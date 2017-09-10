@@ -4,7 +4,7 @@ import pipeline
 from celery import Celery
 
 
-app = Flask(__name__)                                                       # htttp app with rabbitmq broker
+app = Flask(__name__)                                                       # http app with rabbitmq broker
 app.config.update(
     CELERY_BROKER_URL='ampq://localhost:6379',
     CELERY_RESULT_BACKEND='ampq://localhost:6379')
