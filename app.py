@@ -22,7 +22,9 @@ def post_data(payload):
 
 @celery.task()
 def worker_process(payload):
-    return a + b
+    urls = payload['images']
+    img_list = pipeline.load_imgs(urls)
+    
 
 
 
