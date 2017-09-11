@@ -13,7 +13,7 @@ thr = 0.5
 
 def build_module():
     ### This function builds the MXnet model of Inception V3 ###
-    
+    print ### Building MXNet module###
     sym = mx.sym.load(sym_path)                                             # load symbol    
     mod = mx.mod.Module(sym, context=mx.cpu())                              # instantiate MXNet module
     mod.bind([("data",(batch_size,3,299,299))],
@@ -25,7 +25,7 @@ def build_module():
 
 def process_images(img_list, module):
     ### This function infers batches of data ###
-    
+    print ### Running inference###
     data = np.concatenate([im['data'] for im in img_list], axis=0)  
     labels = np.ones(data.shape[0])                                         # so that the engine doesn't complain
     eval_data = mx.io.NDArrayIter(data, labels, batch_size=batch_size)      # data iterator
@@ -50,7 +50,7 @@ def preprocess_img(img):
     
 def make_results(img_list, pred):
     ### This function assembles the results from the predictions ###
-    
+    print ### Constructing output ###
     syn = []
     with open('model/synset.txt') as f:                                     # ImageNet synset names
         f.next()
@@ -85,6 +85,7 @@ def load_imgs(url_list):
     
     img_list = []
     for u in url_list:
+        print '### Loading image ###' + u
         img_list.append({})
         img_list[-1]['url'] = u
         img = load_img(u)

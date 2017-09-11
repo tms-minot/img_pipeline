@@ -24,17 +24,17 @@ celery = make_celery(app)                                                   # as
 
 
 @app.route('/api/infer', methods=['POST'])                                  # API entry point decorator
-@celery.task()
 def post_data():
-    payload = request.get_json(force=True)
-    urls = payload['images']                                                # JSON input
-    results = worker_process(urls)
-    return jsonify(results)                                                 # JSON ouput
+    payload = request.get_json(force=True)                                                # JSON input
+    results = worker_process.apply_async((payload,))
+    resp = results.get()
+    return jsonify({'results':resp})                                                 # JSON ouput
 
 
-                                                              # celery worker
-def worker_process(urls):
+@celery.task()                                                              # celery worker
+def worker_process(payload):
     
+    urls = payload['images']
     img_list = pipeline.load_imgs(urls)
     img_list_valid = [im for im in img_list if im['data'] is not None]
     
