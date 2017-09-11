@@ -1,4 +1,4 @@
-'''
+
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
 import pytest
@@ -25,4 +25,3 @@ def test_classes():
     pipeline.make_results(img_list,pred)
     assert 'data' not in img_list[0].keys
     assert len(img_list[0]['classes']) is 5
-'''    
