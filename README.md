@@ -10,9 +10,9 @@ This structure enables distributed computing across the Celery worker's threads.
 For all intents and purposes the deep learning model used within MXNet is Inception V3 pretrained on ImageNet, it spans a softmax output of 1000 classes.
 
 ## Source code
-* app.py is the Flask app
-* pipeline.py contains the functions for image processing/inference
-* client_sample.py provides a Python example of POST requests with JSON
+* `app.py` is the Flask app
+* `pipeline.py` contains the functions for image processing/inference
+* `client_sample.py` provides a Python example of POST requests with JSON
 
 ## Unit tests
 To do
