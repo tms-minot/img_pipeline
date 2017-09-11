@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import pipeline
 from celery import Celery
 
@@ -18,19 +18,21 @@ def make_celery(app):
     
 app = Flask(__name__)                                                       # http app with rabbitmq broker
 app.config.update(
-    CELERY_BROKER_URL='amqp://guest:guest@localhost:5672',
-    CELERY_RESULT_BACKEND='amqp://guest:guest@localhost:5672')
+    CELERY_BROKER_URL='amqp://guest:guest@localhost:5672/',
+    CELERY_RESULT_BACKEND='amqp://guest:guest@localhost:5672/')
 celery = make_celery(app)                                                   # async job queue for workers to process
 
 
 @app.route('/api/infer', methods=['POST'])                                  # API entry point decorator
-def post_data(payload):
+@celery.task()
+def post_data():
+    payload = request.get_json(force=True)
     urls = payload['images']                                                # JSON input
     results = worker_process(urls)
     return jsonify(results)                                                 # JSON ouput
 
 
-@celery.task()                                                              # celery worker
+                                                              # celery worker
 def worker_process(urls):
     
     img_list = pipeline.load_imgs(urls)
@@ -39,10 +41,10 @@ def worker_process(urls):
     try:
         module                                                              # if undefined,
     except NameError:
-        module =  pipeline.build_module(batch_size)                         # build MXNet module once for each worker 
+        module =  pipeline.build_module()                                   # build MXNet module thread safe for inference 
     
     pred = pipeline.process_images(img_list_valid, module).asnumpy()        # inference results 
-    result = pipeline.make_results(img_list, pred, thr)                     # classes and scores
+    result = pipeline.make_results(img_list, pred)                          # classes and scores
 
     return result
 

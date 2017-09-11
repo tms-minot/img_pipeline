@@ -60,7 +60,7 @@ def make_results(img_list, pred):
     j = 0
     for im in img_list:
         if im['data'] is not None:
-            im['classes'] = [{'class': syn[i], 'confidence':r} for i,r in enumerate(np.nditer(pred[j])) if r>thr]
+            im['classes'] = [{'class': syn[i], 'confidence':r.tolist()} for i,r in enumerate(np.nditer(pred[j])) if r>thr]
             j +=1
         else:
             im['Error'] = 'Invalid URL'
