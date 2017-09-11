@@ -24,10 +24,10 @@ api.config.update(
 celery = make_celery(api)                                                   # async job queue for workers to process
 
 
-@worker_init.connect
+@worker_init.connect                                                        # Only if inside worker
 def inst_model(sender, **kwargs):
     global module 
-    module = pipeline.build_module()                                           # build MXNet module thread safe for inference
+    module = pipeline.build_module()                                        # build MXNet module thread safe for inference
 
 
 @api.route('/api/infer', methods=['POST'])                                  # API entry point decorator
