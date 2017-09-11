@@ -18,7 +18,7 @@ For all intents and purposes the deep learning model used within MXNet is Incept
 To do
 
 ## Model
-Once extracted (see installation), it contains the JSON symbol, the pretrained parameters and the list of synsets. 
+Once extracted (see installation), it contains the JSON symbol, the pretrained parameters and the list of Imagenet synsets. 
 
 # Installation
 
