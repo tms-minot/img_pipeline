@@ -1,5 +1,5 @@
 __This project is an API for image classification.
-It infers from images' urls sent by HTTP requests and returns the classes detected in JSON format.__
+It infers from images' urls sent by HTTP requests and returns the results in JSON format.__
 
 # Description
 
@@ -18,7 +18,7 @@ For all intents and purposes the deep learning model used within MXNet is Incept
 To do
 
 ## Model
-Once extracted, it contains the JSON symbol, the pretrained parameters and the list of synsets. 
+Once extracted (see installation), it contains the JSON symbol, the pretrained parameters and the list of synsets. 
 
 # Installation
 
