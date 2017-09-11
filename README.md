@@ -28,30 +28,33 @@ Once extracted (see installation), it contains the JSON symbol, the pretrained p
 * Celery
 * RabbitMQ
 
-You can easily pip install all of them
+Pip installing all of the above is staightforward.
 
-Load the Inception model (cd to project dir):
+Load the Inception model (cd to project directory):
 ```
 wget http://data.dmlc.ml/mxnet/models/imagenet/inception-v3.tar.gz
 tar -xfz inception-v3.tar.gz
 ```
 
 ## Up and running
-The flask app and the Celery worker run in separate processes
+The flask app and the Celery worker run in separate processes.
 Open a shell in the project directory and issue the following commands:
 ```
 sudo rabbitmq-server -detached
-celery -A app.py workers --loglevel=INFO --concurrency=2
+celery -A src/app.py workers --loglevel=INFO --concurrency=2
 ```
 
 In a second shell (project directory), run the Flask app:
 ```
-FLASK_APP=app.py flask run
+FLASK_APP=src/app.py flask run
 ```    
 Done!
 
 # Usage
-You can now send HTTP requests to the API, for example using the requests module in Python (see client sample script)
+You can now post JSON payloads to the API on the route `/api/infer`, see example using the requests module in Python (client sample script):
+```
+POST localhost:5000/api/infer JSON={images:[url1, url2, url3]}
+```
 
 # NOTES
 The paths and threshold variables are define in the pipeline.py script.
