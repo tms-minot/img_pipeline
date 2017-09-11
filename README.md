@@ -43,15 +43,15 @@ tar -xfz inception-v3.tar.gz
 
 ## Up and running
 The flask app and the Celery worker run in separate processes.
-Open a shell in the project directory and issue the following commands:
+Open a shell in the src directory and issue the following commands:
 ```
 sudo rabbitmq-server -detached
-celery -A src/app.py workers --loglevel=INFO --concurrency=2
+celery -A app worker --loglevel=INFO --concurrency=2
 ```
 
-In a second shell (project directory), run the Flask app:
+In a second shell (always in the source directory), run the Flask app:
 ```
-FLASK_APP=src/app.py flask run
+FLASK_APP=app.py flask run
 ```    
 Done!
 
