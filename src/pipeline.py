@@ -1,3 +1,4 @@
+import os
 import mxnet as mx
 import json
 import csv
@@ -5,11 +6,11 @@ from skimage import io
 from scipy.misc import imresize
 import numpy as np
 
-model_path = 'model/'
-sym_path = model_path + 'Inception-7-symbol.json'
-param_path = model_path + 'Inception-7-0001.params'
-synset_path = model_path + 'synset.txt'
-context = mx.gpu(0)
+model_path = os.path.realpath(os.path.dirname(__file__)+"/../model")
+sym_path = model_path + '/Inception-7-symbol.json'
+param_path = model_path + '/Inception-7-0001.params'
+synset_path = model_path + '/synset.txt'
+context = mx.cpu()
 batch_size = 10
 thr = 0.5
 
