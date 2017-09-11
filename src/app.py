@@ -2,6 +2,7 @@
 from flask import Flask, request, jsonify
 import pipeline
 from celery import Celery
+from celery.signals import worker_init
 
 def make_celery(app):
     celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
@@ -22,7 +23,12 @@ api.config.update(
     CELERY_RESULT_BACKEND='amqp://guest:guest@localhost:5672/')
 celery = make_celery(api)                                                   # async job queue for workers to process
 
-module =  pipeline.build_module()                                           # build MXNet module thread safe for inference
+
+@worker_init.connect
+def inst_model(sender, **kwargs):
+    global module 
+    module = pipeline.build_module()                                           # build MXNet module thread safe for inference
+
 
 @api.route('/api/infer', methods=['POST'])                                  # API entry point decorator
 def post_data():
@@ -46,5 +52,7 @@ def hard_worker(payload):
 
 if __name__ == '__main__':
     api.run(debug=True)
+
+
     
 
