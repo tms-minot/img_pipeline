@@ -4,7 +4,7 @@ It infers from images' urls sent by HTTP requests and returns the results in JSO
 # Description
 
 The API calls are done by POST requests and providing a JSON object of urls.
-The request is sent to a Flask web app which in turns redirects the taks to Celery workers through a RabbitMQ queue.
+Requests are sent to the Flask web app which in turns redirects the tasks to Celery workers through a RabbitMQ queue.
 
 This structure enables distributed computing across the Celery worker's threads. They share the MXNet engine, which is thread safe for inference and has gpu capabilities.
 For all intents and purposes the deep learning model used within MXNet is Inception V3 pretrained on ImageNet, it spans a softmax output of 1000 classes.
