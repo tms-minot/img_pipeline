@@ -5,8 +5,10 @@ from skimage import io
 from scipy.misc import imresize
 import numpy as np
 
-sym_path = 'model/Inception-7-symbol.json'
-param_path = 'model/Inception-7-0001.params'
+model_path = 'model/'
+sym_path = model_path + 'Inception-7-symbol.json'
+param_path = model_path + 'Inception-7-0001.params'
+synset_path = model_path + 'synset.txt'
 batch_size = 10
 thr = 0.5
 
@@ -52,9 +54,9 @@ def make_results(img_list, pred):
     ### This function assembles the results from the predictions ###
     print '### Constructing output ###'
     syn = []
-    with open('model/synset.txt') as f:                                     # ImageNet synset names
+    with open(synset_path) as f:                                               # ImageNet synset names
         for line in f:
-            syn.append(line[10:].split(',', 1)[0].split('\n',1)[0])                          # first word in description 
+            syn.append(line[10:].split(',', 1)[0].split('\n',1)[0])         # first word in description 
             
     j = 0
     for im in img_list:
