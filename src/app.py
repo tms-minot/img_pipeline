@@ -16,24 +16,24 @@ def make_celery(app):
     celery.Task = ContextTask
     return celery
     
-app = Flask(__name__)                                                       # http app with rabbitmq broker
-app.config.update(
+api = Flask(__name__)                                                       # http app with rabbitmq broker
+api.config.update(
     CELERY_BROKER_URL='amqp://guest:guest@localhost:5672/',
     CELERY_RESULT_BACKEND='amqp://guest:guest@localhost:5672/')
-celery = make_celery(app)                                                   # async job queue for workers to process
+celery = make_celery(api)                                                   # async job queue for workers to process
 
 module =  pipeline.build_module()                                           # build MXNet module thread safe for inference
 
-@app.route('/api/infer', methods=['POST'])                                  # API entry point decorator
+@api.route('/api/infer', methods=['POST'])                                  # API entry point decorator
 def post_data():
     payload = request.get_json(force=True)                                  # JSON input
-    results = worker_process.apply_async((payload,))
+    results = hard_worker.apply_async((payload,))
     resp = results.get()
     return jsonify({'results':resp})                                        # JSON ouput
 
 
 @celery.task()                                                              # celery worker
-def worker_process(payload):
+def hard_worker(payload):
     
     urls = payload['images']
     img_list = pipeline.load_imgs(urls)
@@ -45,6 +45,6 @@ def worker_process(payload):
     return result
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    api.run(debug=True)
     
 
