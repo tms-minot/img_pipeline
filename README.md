@@ -21,6 +21,10 @@ For all intents and purposes the deep learning model used within MXNet is Incept
 * 
 You can easily pip install all of them
 
+Load the Inception model (cd to project dir):
+    wget http://data.dmlc.ml/mxnet/models/imagenet/inception-v3.tar.gz
+    tar -xfz inception-v3.tar.gz
+    
 ## Up and running
 The flask app and the Celery worker run in separate processes
 Open a shell in the project directory and issue the following commands:
@@ -36,4 +40,7 @@ Done!
 You can now send HTTP requests to the API, for example using the requests module in Python (see client sample script)
 
 # NOTES
-The paths and threshold variables atr
+The paths and threshold variables are define in the pipeline.py script.
+The API runs seemlessly on C9's CPU servers, although the tests were limited to 20 images and to localhost. Scaling it up shouldn't be an issue.
+The number of Celery workers can be changed with the --concurrency flag.
+The ports used are 5672 for RabbitMQ and 5000 for Flask.
