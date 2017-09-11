@@ -9,6 +9,7 @@ model_path = 'model/'
 sym_path = model_path + 'Inception-7-symbol.json'
 param_path = model_path + 'Inception-7-0001.params'
 synset_path = model_path + 'synset.txt'
+context = mx.gpu(0)
 batch_size = 10
 thr = 0.5
 
@@ -17,7 +18,7 @@ def build_module():
     ### This function builds the MXnet model of Inception V3 ###
     print '### Building MXNet module ###'
     sym = mx.sym.load(sym_path)                                             # load symbol    
-    mod = mx.mod.Module(sym, context=mx.cpu())                              # instantiate MXNet module
+    mod = mx.mod.Module(sym, context=context)                               # instantiate MXNet module
     mod.bind([("data",(batch_size,3,299,299))],
              [("softmax_label",(batch_size,))], 
              for_training=False)                                            # bind to memory, only for inference
