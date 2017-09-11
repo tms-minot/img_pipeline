@@ -22,6 +22,7 @@ app.config.update(
     CELERY_RESULT_BACKEND='amqp://guest:guest@localhost:5672/')
 celery = make_celery(app)                                                   # async job queue for workers to process
 
+module =  pipeline.build_module()                                   # build MXNet module thread safe for inference
 
 @app.route('/api/infer', methods=['POST'])                                  # API entry point decorator
 def post_data():
@@ -37,11 +38,6 @@ def worker_process(payload):
     urls = payload['images']
     img_list = pipeline.load_imgs(urls)
     img_list_valid = [im for im in img_list if im['data'] is not None]
-    
-    try:
-        module                                                              # if undefined,
-    except NameError:
-        module =  pipeline.build_module()                                   # build MXNet module thread safe for inference 
     
     pred = pipeline.process_images(img_list_valid, module).asnumpy()        # inference results 
     result = pipeline.make_results(img_list, pred)                          # classes and scores
