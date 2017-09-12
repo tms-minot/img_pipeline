@@ -1,7 +1,7 @@
 import sys, os
 sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/../src"))
 from flask import Response
-import app as flask_app
+from app import make_api
 import pytest
 
 class t_response(Response):
@@ -11,7 +11,7 @@ class t_response(Response):
 
 @pytest.fixture
 def app():
-    app = flask_app.api
+    app = make_api()[0]
     app.response_class = t_response
     return app
 

@@ -32,6 +32,7 @@ Once extracted (see installation), it contains the JSON symbol, the pretrained p
 * Flask
 * Celery
 * RabbitMQ
+* pytest-flask
 
 Pip installing all of the above is staightforward.
 
