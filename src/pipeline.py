@@ -30,7 +30,7 @@ def build_module():
 def process_images(img_list, module):
     ### This function infers batches of data ###
     print '### Running inference'
-    data = np.concatenate([im['data'] for im in img_list], axis=0)  
+    data = np.concatenate([im['data'] for im in img_list], axis=0)
     labels = np.ones(data.shape[0])                                         # so that the engine doesn't complain
     eval_data = mx.io.NDArrayIter(data, labels, batch_size=batch_size)      # data iterator
     pred = module.predict(eval_data)                                        # predictions from softmax layer
