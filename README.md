@@ -15,7 +15,7 @@ For all intents and purposes the deep learning model used within MXNet is Incept
 * `client_sample.py` provides a Python example of POST requests with JSON
 
 ## Unit tests
-To do: flask app fixtures, MXNet throwing strange exceptions
+To do: MXNet throwing weird exceptions
 
 To run the unit tests:
 ```
