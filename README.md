@@ -15,7 +15,7 @@ For all intents and purposes the deep learning model used within MXNet is Incept
 * `client_sample.py` provides a Python example of POST requests with JSON
 
 ## Unit tests
-To do: MXNet throwing weird exceptions
+To do: MXNet sometimes throwing weird exceptions
 
 To run the unit tests:
 ```
@@ -57,13 +57,13 @@ FLASK_APP=app.py flask run
 Done!
 
 # Usage
-You can now post JSON payloads to the API on the route `/api/infer`, see example using the requests module in Python (client sample script):
+You can now post JSON payloads to the API via the route `/api/infer`, see example using the requests module in Python (client sample script):
 ```
 POST localhost:5000/api/infer JSON={images:[url1, url2, url3]}
 ```
 
 # NOTES
-The paths and threshold variables are define in the pipeline.py script.
-The API runs seemlessly on C9's CPU servers, although the tests were limited to 20 images and to localhost. Scaling up shouldn't be an issue.
-The number of Celery workers can be changed with the `--concurrency` flag.
-The ports used are 5672 for RabbitMQ and 5000 for Flask.
+* The paths and threshold variables are define in the pipeline.py script
+* The API runs seemlessly on C9's CPU servers, although the tests were limited to 20 images and to localhost. Scaling up shouldn't be an issue.
+* The number of Celery workers can be changed with the `--concurrency` flag.
+* The ports used are 5672 for RabbitMQ and 5000 for Flask.
